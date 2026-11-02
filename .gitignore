@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# App runtime logs
+logs/
+*.log
+
+# Secrets / local env
+.env
+
+# Build outputs
+*.zip
+
+# Terraform (Phase 4) - state and provider caches must never be committed
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log

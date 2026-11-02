@@ -1,0 +1,27 @@
+# Keep the build context small and free of secrets / local junk
+.git
+.github
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+README.md
+*.md
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# Runtime / local files
+logs/
+*.log
+.env
+*.zip
+
+# Later project phases (not needed inside the image)
+k8s/
+helm/
+terraform/
