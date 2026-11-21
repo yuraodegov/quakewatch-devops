@@ -1,0 +1,7 @@
+# Dedicated namespace for the QuakeWatch application
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: quakewatch
+  labels:
+    app.kubernetes.io/part-of: quakewatch

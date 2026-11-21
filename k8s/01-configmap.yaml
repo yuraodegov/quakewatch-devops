@@ -1,0 +1,14 @@
+# Non-secret configuration, injected into the containers as environment variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quakewatch-config
+  namespace: quakewatch
+  labels:
+    app: quakewatch
+data:
+  # Port gunicorn listens on (used by the Dockerfile CMD: --bind 0.0.0.0:${PORT})
+  PORT: "5000"
+  APP_ENV: "kubernetes"
+  # Used by the health-check CronJob: in-cluster DNS name of the Service
+  HEALTHCHECK_URL: "http://quakewatch.quakewatch.svc.cluster.local:5000/health"

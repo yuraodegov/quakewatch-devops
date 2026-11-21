@@ -1,0 +1,51 @@
+# Every 5 minutes checks from inside the cluster that the QuakeWatch Service answers.
+# A failed check makes the Job fail, which is visible in "kubectl get jobs".
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: quakewatch-healthcheck
+  namespace: quakewatch
+  labels:
+    app: quakewatch
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      # Do not retry a failed check, the next run comes in 5 minutes anyway
+      backoffLimit: 0
+      template:
+        metadata:
+          labels:
+            app: quakewatch-healthcheck
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: healthcheck
+              image: busybox:1.37
+              env:
+                - name: HEALTHCHECK_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: quakewatch-config
+                      key: HEALTHCHECK_URL
+              command: ["sh", "-c"]
+              args:
+                - |
+                  echo "$(date '+%Y-%m-%d %H:%M:%S') checking $HEALTHCHECK_URL"
+                  if wget -q -T 5 -O - "$HEALTHCHECK_URL"; then
+                    echo ""
+                    echo "OK: QuakeWatch is up"
+                  else
+                    echo "FAIL: QuakeWatch is not responding"
+                    exit 1
+                  fi
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 16Mi
+                limits:
+                  cpu: 100m
+                  memory: 32Mi
